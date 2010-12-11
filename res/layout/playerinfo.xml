@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ Android-Freeciv - Copyright (C) 2010 - C Vaughn
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+ --> 
+<ScrollView android:layout_width="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent">
+	<LinearLayout android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:orientation="vertical">
+		<TextView android:layout_height="wrap_content" android:id="@+id/player_name"
+			android:layout_width="fill_parent"></TextView>
+		<TextView android:layout_height="wrap_content" android:id="@+id/nation_name"
+			android:layout_width="fill_parent"></TextView>						
+		<ImageView android:layout_height="wrap_content" android:id="@+id/player_flag" android:layout_width="fill_parent" android:fadingEdge="none" android:scaleType="fitEnd"></ImageView>
+		<TextView android:layout_height="wrap_content" android:id="@+id/turn_count"
+			android:layout_width="fill_parent"></TextView>
+		<TextView android:layout_height="wrap_content" android:id="@+id/last_bulbs"
+			android:layout_width="fill_parent"></TextView>			
+			
+			
+	<LinearLayout android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="fill_parent" android:onClick="clickGovernment" android:background="@drawable/clickable_highlights"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/government_type_icon"></ImageView><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/government_type_name"></TextView></LinearLayout><include android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/impr_info" layout="@layout/imprinfo"></include><ProgressBar android:layout_height="wrap_content" style="?android:attr/progressBarStyleHorizontal" android:max="100" android:id="@+id/tech_progress" android:layout_width="fill_parent"></ProgressBar><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/research_progress"></TextView>
+
+
+<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Diplomacy" android:onClick="showDiplomacy"></Button>
+</LinearLayout>
+
+
+
+
+
+
+</ScrollView>

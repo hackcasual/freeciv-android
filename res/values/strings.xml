@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2009 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources>
+    <string name="hello">Hello World, Freeciv!</string>
+    <string name="app_name">Freeciv</string>
+    <string name="app_title">Freeciv</string>
+<string name="Ok">Ok</string>
+<string name="Cancel">Cancel</string>
+<string name="new_city">New City</string>
+<string name="city_name">Name</string>
+<string name="city_of">City of</string>
+<string name="population">Population</string>
+<string name="citizens">citizens</string>
+<string name="food">Food</string>
+<string name="per_turn">per turn</string>
+<string name="surplus">Surplus</string>
+<string name="production">Production</string>
+<string name="support">Support</string>
+<string name="trade">Trade</string>
+<string name="corruption">Corruption</string>
+<string name="gold">Gold</string>
+<string name="upkeep">Upkeep</string>
+<string name="science">Science</string>
+<string name="luxury">Luxury</string>
+<string name="new_game">New Game</string>
+<string name="load_game">Load Game</string>
+<string name="settings">Settings</string>
+<string name="reference">Reference</string>
+</resources>

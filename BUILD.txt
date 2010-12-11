@@ -1,0 +1,39 @@
+Dependencies:
+
+Eclipse (http://eclipse.org)
+Android SDK (http://developer.android.com/sdk/index.html)
+Android Developer Tools Eclipse Plugin (http://developer.android.com/guide/developing/tools/adt.html)
+Android NDK from CrystaX (http://www.crystax.net/android/ndk-r4.php)
+commons-compress (http://commons.apache.org/compress/)
+guava (http://code.google.com/p/guava-libraries/)
+Java 1.6 JDK (http://www.sun.com)
+Cygwin (http://cygwin.org) # If you are developing on windows
+
+Development has been done solely on Windows to date, however all tools 
+should work fine under Linux and OS X.
+
+Getting Started:
+
+If you've never developed for Android before, work through a few examples, 
+including a NDK based project.
+
+Once you are comfortable using Eclipse, create a new Android project using 
+existing source, and point it to the directory you unpacked this 
+distribution in. Select Android 2.1 for the SDK level.
+
+Make sure you select Java 1.6 as the target SDK, and add guava and 
+commons-compress as libs to the project.
+
+For the C libraries, you will need libpng setup. Follow the instructions in
+jni/libpng.
+
+You will need to build the shared object files using ndk-build from the
+root directory of the project.
+
+Pro tip: use ndk-build -j4 to build with 4 processes, big speed up for
+multi-core systems.
+
+Once the shared objects are built, refresh the libs directory in Eclipse,
+clean, then run the project. Select a connected device or use an emulator.
+
+That's it, any comments, please e-mail hackcasual@gmail.com

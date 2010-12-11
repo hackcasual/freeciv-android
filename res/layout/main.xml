@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ Android-Freeciv - Copyright (C) 2010 - C Vaughn
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+ --> 
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/main_frame" android:layout_height="fill_parent"
+	android:layout_width="fill_parent">
+	<ImageView android:id="@+id/map_view" android:layout_height="fill_parent"
+		android:layout_width="fill_parent"></ImageView>
+	<TextView android:layout_height="wrap_content" android:id="@+id/msg_bar"
+		android:layout_width="fill_parent" android:textColor="#fff"
+		android:textSize="18sp" android:shadowColor="#333" android:shadowDx="1"
+		android:shadowDy="1" android:shadowRadius="2" android:background="#6663"></TextView>
+</FrameLayout>
+

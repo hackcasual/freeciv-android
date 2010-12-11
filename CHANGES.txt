@@ -1,0 +1,54 @@
+Android FreeCiv port
+
+2010-24-11
+----------
+
+Based on FreeCiv 2.2.1, the following changes were made
+
+client/audio.c
+* Stubbed out all audio by returning from all functions
+
+client/chatline_common.c
+* Added system logging for messages
+
+client/client_main.c
+* Added additional state logging
+
+client/mapview_common.c
+* Added additional logging for debugging
+
+client/options.c
+* Changed default options
+
+client/packhand.c
+* Stubbed out play_sound
+
+client/tilespec.c
+* Added Peter Arbor's patch
+* Added load progress updates
+* Added method to free big sprites explicitly
+
+server/console.c
+* Added compression check before setting compression frozen/thawed status
+
+server/sernet.c
+* Added additional logging to packet handling failure
+
+server/srv_main.c
+* Hardcoded save file path
+
+utility/fciconv.c
+* Stubbed out transliteration_string
+* Stubbed out fc_fprintf
+* Commented out internal format conversion
+
+utility/log.c
+* Added initial system log support
+
+utility/shared.
+* Changed DEFAULT_DATA_PATH to point to flash storage
+* Hardcoded seperators
+
+dependencies/lua-5.1/src/llex.c -> jni/lua-5.1/src/llex.c
+* Hard coded decimal point
+

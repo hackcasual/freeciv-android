@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ Android-Freeciv - Copyright (C) 2010 - C Vaughn
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+ --> 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="wrap_content" android:layout_width="fill_parent"
+	android:orientation="vertical" style="@android:style/Theme.Light">
+	<LinearLayout android:layout_height="wrap_content"
+		android:id="@+id/city_of" android:orientation="horizontal"
+		android:paddingLeft="10sp" android:paddingBottom="5sp" android:layout_width="fill_parent" android:background="@drawable/gold_title">
+		
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/city_name"
+			style="@style/city_name" android:ellipsize="marquee" android:background="@android:color/transparent"></TextView>
+	</LinearLayout>
+
+	<ScrollView android:layout_height="wrap_content" android:layout_width="fill_parent"><LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:orientation="vertical"><LinearLayout android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="wrap_content" style="@style/city_info_line">
+		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/population" style="@style/city_info"></TextView>
+		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/city_population" style="@style/city_info"></TextView>
+	</LinearLayout><LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:background="@drawable/title_gradient" android:orientation="vertical" android:padding="5dp"><LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:orientation="vertical" android:background="@android:color/transparent" android:id="@+id/map_holder"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/city_map" android:layout_gravity="center_horizontal" android:background="@android:color/transparent"></ImageView></LinearLayout>
+</LinearLayout><LinearLayout android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="wrap_content" style="@style/city_info_line">
+		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/food" style="@style/city_info"></TextView>
+		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/city_food_per_turn" style="@style/city_info"></TextView>
+		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/per_turn" style="@style/city_info"></TextView>			
+		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/surplus" style="@style/city_info" android:paddingLeft="5sp"></TextView>
+		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/city_food_surplus" style="@style/city_info"></TextView>
+			
+	</LinearLayout><LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:clickable="true" android:background="@drawable/clickable_highlights"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/current_production_icon"></ImageView><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/current_production_name"></TextView></LinearLayout><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/change_production" android:text="Change Production"></Button><LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/present_units" android:isScrollContainer="false" android:orientation="vertical"></LinearLayout></LinearLayout></ScrollView>
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+</LinearLayout>

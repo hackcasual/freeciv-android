@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ Android-Freeciv - Copyright (C) 2010 - C Vaughn
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+ --> 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_height="fill_parent"
+	android:layout_width="fill_parent">
+	<LinearLayout android:layout_height="wrap_content"
+		android:orientation="horizontal" android:paddingLeft="10sp"
+		android:paddingBottom="5sp" android:layout_width="fill_parent"
+		android:background="@drawable/gold_title" android:layout_marginBottom="10dp">
+
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:ellipsize="marquee"
+			android:background="@android:color/transparent" android:text="@string/app_title"
+			style="@style/main_title"></TextView>
+	</LinearLayout>
+	<include android:id="@+id/include01" layout="@layout/mainoptions"
+		android:layout_height="fill_parent" android:layout_weight="1"
+		android:layout_width="fill_parent"></include>
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_marginTop="12dp" android:orientation="horizontal"
+		android:layout_height="15dp" android:layout_marginBottom="5dp"
+		android:id="@+id/tileset_progress_bar" android:background="#FFF">
+		<TextView android:layout_height="wrap_content" android:id="@+id/current_progress_item"
+			android:layout_width="fill_parent" android:layout_weight="2"
+			android:layout_marginLeft="5dp" android:lines="1" android:textSize="10dp"
+			android:scrollHorizontally="false"></TextView>
+		<ProgressBar android:id="@+id/current_progress_bar"
+			android:layout_height="fill_parent" android:layout_width="fill_parent"
+			android:layout_weight="1" android:indeterminate="false"
+			style="?android:attr/progressBarStyleHorizontal" android:max="100"
+			android:progress="0" android:layout_marginLeft="5sp"
+			android:layout_marginRight="5sp"></ProgressBar>
+	</LinearLayout>
+
+</LinearLayout>

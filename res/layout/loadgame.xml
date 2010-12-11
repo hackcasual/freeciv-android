@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ Android-Freeciv - Copyright (C) 2010 - C Vaughn
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+ --> 
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical" android:layout_height="fill_parent" android:layout_width="fill_parent">
+  
+  	<LinearLayout android:layout_height="wrap_content"
+		android:orientation="horizontal" android:paddingLeft="10sp"
+		android:layout_width="fill_parent"
+		android:background="@drawable/gold_title" android:layout_marginBottom="10dp">
+
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:ellipsize="marquee"
+			android:background="@android:color/transparent" android:text="@string/load_game"
+			style="@style/main_title"></TextView>
+	</LinearLayout>
+<ListView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/saved_games" android:paddingTop="10dp"></ListView>
+</LinearLayout>
