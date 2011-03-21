@@ -19,7 +19,7 @@ gen
 .project
 .cproject
 *.so
-
+.externalToolBuilders
 *.o
 
 obj
