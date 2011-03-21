@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:orientation="vertical" android:layout_height="wrap_content">
+
+	<LinearLayout
+	  xmlns:android="http://schemas.android.com/apk/res/android"
+	  android:layout_width="match_parent"
+	  android:orientation="horizontal" android:layout_height="wrap_content">
+	  <LinearLayout
+		  xmlns:android="http://schemas.android.com/apk/res/android"
+		  android:layout_width="wrap_content"
+		  android:layout_height="match_parent" android:orientation="vertical" android:layout_weight="1">
+		<ImageView android:src="@drawable/icon" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/screen_shot"></ImageView>
+		<ProgressBar android:layout_gravity="center" android:id="@+id/screenshot_progress" android:layout_height="wrap_content" android:layout_width="wrap_content"></ProgressBar>
+		</LinearLayout>
+		<LinearLayout
+		  xmlns:android="http://schemas.android.com/apk/res/android"
+		  android:layout_width="wrap_content"
+		  android:layout_height="match_parent" android:orientation="vertical" android:layout_weight="1">
+			<ImageView android:src="@drawable/icon" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/nation_flag"></ImageView>
+			<ImageView android:src="@drawable/icon" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/overlay_map"></ImageView>
+			<ProgressBar android:layout_gravity="center" android:id="@+id/map_and_flag_progress" android:layout_height="wrap_content" android:layout_width="wrap_content"></ProgressBar>
+		
+			
+		</LinearLayout>
+		
+		
+	</LinearLayout>
+	<LinearLayout
+	  xmlns:android="http://schemas.android.com/apk/res/android"
+	  android:layout_width="match_parent"
+	  android:layout_height="match_parent" android:orientation="horizontal">
+		<Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/delete_game" android:layout_weight="1" android:id="@+id/delete_button"></Button>
+		<Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/send_game" android:layout_weight="1" android:id="@+id/send_button"></Button>
+	
+		
+	</LinearLayout>
+	
+	
+</LinearLayout>

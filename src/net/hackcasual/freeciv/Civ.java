@@ -13,23 +13,41 @@
 
 package net.hackcasual.freeciv;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
+import net.hackcasual.freeciv.game.Game;
+import net.hackcasual.freeciv.game.SaveGameDB;
 import net.hackcasual.freeciv.models.Advance;
 import net.hackcasual.freeciv.models.AdvanceExpense;
 import net.hackcasual.freeciv.models.Government;
 import net.hackcasual.freeciv.models.Improvement;
+import net.hackcasual.freeciv.models.Player;
 import net.hackcasual.freeciv.models.UnitType;
+import net.hackcasual.freeciv.views.Freeciv;
 import net.hackcasual.freeciv.views.NativeAwareActivity;
 
 import net.hackcasual.freeciv.R;
 
 import android.app.Application;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.util.Log;
 
 public class Civ extends Application implements NativeEventListener {
@@ -51,9 +69,27 @@ public class Civ extends Application implements NativeEventListener {
 	static Map<Integer, Advance> advancesById;
 	static Map<Integer, Government> governmentsById;		
 	
+	static SaveGameDB savedGameDB;
+	
+	static Context context;
+	
+	static int lastTurn = -1;
+	static int startTurn = 0;
+	
+	public enum SaveType {
+		AUTO, // Triggered by a new turn, configured by the user
+		MANUAL, // Triggered by the user
+		FORCED // Triggered by leaving the app, only one save permitted
+	}
+	
 	@Override
 	public void onCreate() {
 		Log.i("Freeciv", "Creating the app.");
+		
+		context = this.getApplicationContext();
+		
+		savedGameDB = new SaveGameDB(this);
+		
         DataSetup.doIt(this.getResources().openRawResource(R.raw.freeciv));
 		nativeHarness = NativeHarness.getHarness();
 		
@@ -165,6 +201,171 @@ public class Civ extends Application implements NativeEventListener {
 	
 	public static Government getGovernmentById(int id) {
 		return governmentsById.get(id);
+	}
+	
+	public static void checkForNewTurn() {
+		Player p = NativeHarness.getPlayerInfo();
+		
+		if (lastTurn < 0) {
+			lastTurn = p.getTurns();
+			startTurn = p.getTurns();
+		} else if (p.getTurns() != lastTurn) {
+			lastTurn = p.getTurns();
+			
+			if ((lastTurn - startTurn) % Settings.getCurrentSettings().getTurnsBetweenAutoSaves() == 0) {
+				saveGame(SaveType.AUTO);
+			}
+		}
+		Log.d("FreeCiv", lastTurn + " " + p.getTurns() + " " + startTurn);
+
+	}
+	
+	public static void saveGame(SaveType type) {
+
+		Player p = NativeHarness.getPlayerInfo();		
+		String baseGameName = String.format("%s_Y%s_T%d-%d", p.getName(), p.getYear(), p.getTurns(), System.currentTimeMillis() / 1000)
+			.replaceAll("\\s", "_").replaceAll("\\.", "");
+
+		switch (type) {
+		case AUTO: {		
+			File savesDirectory = new File(Settings.getCurrentSettings().getSavedGameDir() + "/auto");
+			saveGameHelper(savesDirectory, baseGameName, p);
+			clearSaveGames();
+		} break;
+		
+		case FORCED: {
+			File savesDirectory = new File(Settings.getCurrentSettings().getSavedGameDir() + "/forced");
+			saveGameHelper(savesDirectory, baseGameName, p);		
+		} break;
+		case MANUAL: {
+			File savesDirectory = new File(Settings.getCurrentSettings().getSavedGameDir());
+			saveGameHelper(savesDirectory, baseGameName, p);
+		} break;
+		}
+	}
+
+	private static void clearSaveGames() {
+		List<Game> savedGames = savedGameDB.listGames();
+		
+		TreeSet<Game> autoGames = new TreeSet<Game>(new Comparator<Game>(){
+			@Override
+			public int compare(Game arg0, Game arg1) {
+				return arg1.getLastPlayed().compareTo(arg0.getLastPlayed());
+			}
+		});
+		
+		Set<Game> forcedSaves = new HashSet<Game>();
+		
+		for (Game g: savedGames) {
+			if (!g.saveExists()) {
+				cleanSaveFS(g); // Clean up anyway, we might have missed the screen shots
+				savedGameDB.delete(g);
+			}
+			else if (g.getSavedGame().getParent().endsWith("auto"))
+				autoGames.add(g);
+			else if (g.getSavedGame().getParent().endsWith("forced"))
+				forcedSaves.add(g);
+		}
+		
+		int gameCount = 0;
+		
+		for (Game g: autoGames) {
+			if (gameCount > Settings.getCurrentSettings().getMaxNumberOfAutoSaves()) {
+				savedGameDB.markForDelete(g);
+				cleanSaveFS(g);
+				savedGameDB.delete(g);
+			}
+			gameCount++;
+		}
+
+		for (Game g: forcedSaves) {
+			savedGameDB.markForDelete(g);
+			cleanSaveFS(g);
+			savedGameDB.delete(g);
+		}
+		
+		savedGameDB.close();
+	}
+	
+	private static void cleanSaveFS(Game g) {
+		g.getSavedGame().delete();
+		g.getOverlayView().delete();
+		g.getSnapShot().delete();
+	}
+
+	public static void deleteGame(Game g) {
+		savedGameDB.markForDelete(g);
+		cleanSaveFS(g);
+		savedGameDB.delete(g);
+		savedGameDB.close();
+	}
+	
+	//TODO: Leverage grayscale JPEG for smaller size, use the alpha channel
+	private static Bitmap convertScreenShot(Bitmap mapView) {
+		int dimension = Math.min(mapView.getHeight(), mapView.getWidth());
+   
+		Bitmap screenShot = Bitmap.createBitmap(dimension, dimension,
+				   Bitmap.Config.RGB_565);
+		
+		Canvas c = new Canvas(screenShot);
+		
+		Paint paint = new Paint();
+		ColorMatrix cm = new ColorMatrix();
+		cm.setSaturation(0);
+		ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+		paint.setColorFilter(f);
+		
+		int xo = (mapView.getWidth() - dimension) / 2;
+		int yo = (mapView.getHeight() - dimension) / 2;
+		
+		c.drawBitmap(mapView, -xo, -yo, paint);
+		
+		return screenShot;
+	}
+	
+	private static void saveGameHelper(File destinationDirectory, String tag, Player p) {
+		if (!destinationDirectory.exists())
+			destinationDirectory.mkdirs();
+		
+		File savedGameFile = new File(destinationDirectory, tag + ".sav.gz");
+		File snapShotFile = new File(destinationDirectory, tag + ".ss.jpg");
+		File overlayFile = new File(destinationDirectory, tag + ".ol.jpg");
+		
+		NativeHarness.save(savedGameFile.getAbsolutePath());
+					
+		Game game = new Game(p.getUserName(), savedGameFile, snapShotFile, overlayFile, new Date(), p.getScore(),
+				p.getTurns(), p.getPeopleName(), String.format("%s %s",p.getRulerName(), p.getName()), p.getYear(), p.getPopulation(), p.getFlagName());
+		
+		savedGameDB.storeGame(game);
+		savedGameDB.close();
+		try {
+		       FileOutputStream out = new FileOutputStream(snapShotFile);
+		       Bitmap screenShot = convertScreenShot(Freeciv.getMapView());		       
+		       screenShot.compress(Bitmap.CompressFormat.JPEG, 85, out);
+		       screenShot.recycle();
+		       out = new FileOutputStream(overlayFile);
+		       NativeHarness.getOverview().compress(Bitmap.CompressFormat.JPEG, 85, out);
+		} catch (Exception e) {
+		       e.printStackTrace();
+		}
+	}
+	
+	public static SaveType getSaveType(Game g) {
+		if (g.getSavedGame().getParent().endsWith("auto"))
+			return SaveType.AUTO;
+		else if (g.getSavedGame().getParent().endsWith("forced"))
+			return SaveType.FORCED;
+		else
+			return SaveType.MANUAL;
+	}
+	
+	public static Bitmap getBigFlag(String flagName) {
+		int flagResourceId = context.getResources().getIdentifier("net.hackcasual.freeciv:drawable/" + flagName + "_big", null, null);
+		
+		if (0 == flagResourceId)
+			flagResourceId = R.drawable.unknown_big;
+		
+		return BitmapFactory.decodeResource(context.getResources(), flagResourceId);
 	}
 	
 	public List<AdvanceExpense> getCurrentResearchStatus() {

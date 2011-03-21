@@ -80,12 +80,11 @@ public class NativeHarness {
 		return dm;
 	}
 
-	Bitmap overview = Bitmap.createBitmap(156, 104, Bitmap.Config.RGB_565);
+	static Bitmap overview = Bitmap.createBitmap(156, 104, Bitmap.Config.RGB_565);
 	
 	public native void startServer();
 	public native void startClient();
 	public static native void init(int width, int height);
-	public synchronized static native int touchEvent(int x, int y, int type);
 
 	public native void registerDialogManager(DialogManager dm);
 	public native void reloadMap();
@@ -95,8 +94,8 @@ public class NativeHarness {
 	public native void clickCityMap(int cityPtr, int x, int y);	
 	
 	private native int[] getUnitsInCity(int cityId);
-	public native int[] getUnitsOnTile(int x, int y);
-	public native Unit getUnitById(int unitId);
+	public static native int[] getUnitsOnTile(int x, int y);
+	public static native Unit getUnitById(int unitId);
 	
 	public List<Unit> getUnitsInCity(City city) {
 		List<Unit> units = new ArrayList<Unit>();
@@ -109,7 +108,7 @@ public class NativeHarness {
 	}
 	
 	private native byte[] getAvailableCommandsForActiveUnit();
-	private native void sendNativeCommand(int command);
+	private native static void sendNativeCommand(int command);
 	
 	public native Improvement[] loadImprovements();
 	public native UnitType[] loadUnitTypes();
@@ -122,7 +121,7 @@ public class NativeHarness {
 	public static native int[] getAvailableGovernments();
 	public static native Player getPlayerInfo();
 	public static native void setAdvanceGoal(int goalId);
-	public native void focusOnUnit(int unitId);
+	public native static void focusOnUnit(int unitId);
 	
 	public native void positionFromOverview(int x, int y);
 	
@@ -131,27 +130,37 @@ public class NativeHarness {
 	public static native void setCityProductionToImprovement(int cityId, int imprId);
 	public static native void setCityProductionToUnit(int cityId, int unitId);
 	
-	public static native void save();
+	public static native void actionSelectPopup(int x, int y);
+	public static native void moveMapView(int deltax, int deltay);	
+	public static native int getCityOnTile(int x, int y);
+	public static native void showCursorAt(int x, int y);	
+	public static native void cancelAction();
 	
 	public static native void tellServer(String cmd);
+	
+	
+	public static void save(String name) {
+		tellServer("/save " + name);
+	}
+	
 	public static native void exercise1();
 	
 	public native int getFocusedUnitType();
 	
-	private native void pullOverview();
+	private static native void pullOverview();
 	
 	private boolean serverRunning, clientRunning;
 	
-	private ByteBuffer nativeBuffer;
-	private ByteBuffer javaBuffer;
+	static private ByteBuffer nativeBuffer;
+	static private ByteBuffer javaBuffer;
 	
 	public void registerNativeBuffers(ByteBuffer nativeToJavaBuffer, ByteBuffer javaToNativeBuffer) {
 		//Log.i("Freeciv","Got a bitmap buffer");
-		this.nativeBuffer = nativeToJavaBuffer;
-		this.javaBuffer = javaToNativeBuffer;
+		nativeBuffer = nativeToJavaBuffer;
+		javaBuffer = javaToNativeBuffer;
 	}
 	
-	public Bitmap getOverview() {
+	public static Bitmap getOverview() {
 		pullOverview();		
 		overview.copyPixelsFromBuffer(getIncomingBuffer());
 		return overview;
@@ -246,12 +255,11 @@ public class NativeHarness {
 		
 		if (nativeListener != null) {
 			nativeListener.setConnectionStatus(true);
-
 		}
 		
 	}
 	
-	public Buffer getIncomingBuffer() {
+	public static Buffer getIncomingBuffer() {
 		return nativeBuffer;
 	}
 		
@@ -314,7 +322,7 @@ public class NativeHarness {
  		return rval;
 	}
 	
-	public void sendCommand(int command) {
+	public static void sendCommand(int command) {
 		sendNativeCommand(command);
 	}
 
@@ -361,6 +369,7 @@ public class NativeHarness {
 			this.container = container;
 		}
 		public void run() {
+			Log.i("SparkyTWD","Starting server thread");
 			container.startServer();
 		}
 	}

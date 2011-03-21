@@ -13,29 +13,22 @@
 
 package net.hackcasual.freeciv.models;
 
-import android.graphics.Bitmap;
-import android.graphics.Matrix;
+import android.util.DisplayMetrics;
 
 public class Government extends Universal {
 	final int requiredAdvance;
-	final Bitmap scaledIcon;
 
 	public Government(String name, int id, String helpText, int icon_w,
 			int icon_h, int requiredAdvance) {
 		super(name, id, helpText, icon_w, icon_h);
 		this.requiredAdvance = requiredAdvance;
 
-		
-		scaledIcon = Bitmap.createScaledBitmap(icon, icon.getWidth() * 2, icon.getHeight() * 2, false);
-		icon.recycle();	
+
+		icon.setTargetDensity(DisplayMetrics.DENSITY_XHIGH * 2);
+		icon.setFilterBitmap(false);
 	}
 
 	public int getRequiredAdvance() {
 		return requiredAdvance;
-	}
-	
-	@Override
-	public Bitmap getIcon() {
-		return scaledIcon;
-	}
+	}	
 }

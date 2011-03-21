@@ -37,6 +37,7 @@ public class Unit {
 		
 		this.sprite = Bitmap.createBitmap(sprite_w, sprite_h, Bitmap.Config.ARGB_4444);
 		this.sprite.copyPixelsFromBuffer(NativeHarness.getHarness().getIncomingBuffer());
+		
 	}
 
 	public int getUnitId() {

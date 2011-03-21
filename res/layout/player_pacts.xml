@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent">
+	<LinearLayout android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:orientation="vertical">
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/conditions"></TextView>
+		<LinearLayout android:orientation="vertical" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/conditions_list"></LinearLayout>
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="..."
+			android:id="@+id/no_conditions"></TextView>
+		<LinearLayout android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/general_pacts"
+			android:orientation="vertical">
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/give_general"></TextView>
+			<LinearLayout android:orientation="vertical" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:id="@+id/general_clauses"
+				android:isScrollContainer="false"></LinearLayout>
+		</LinearLayout>
+		<LinearLayout android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/advance_pacts"
+			android:orientation="vertical">
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/give_advance"></TextView>
+			<LinearLayout android:orientation="vertical" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:id="@+id/advance_clauses"></LinearLayout>
+		</LinearLayout>
+		<LinearLayout android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/city_pacts"
+			android:orientation="vertical">
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/give_city"></TextView>
+			<LinearLayout android:orientation="vertical" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:id="@+id/city_clauses"></LinearLayout>
+		</LinearLayout>
+
+
+
+	</LinearLayout>
+
+</ScrollView>

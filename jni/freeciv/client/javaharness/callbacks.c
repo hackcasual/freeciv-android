@@ -25,8 +25,10 @@ jobject dialog_manager = 0;
 JavaVM *jvm = 0;
 
 jmethodID new_city_dialog_mid = 0;
+jmethodID turn_done_state_mid = 0;
 jmethodID city_dialog_mid = 0;
 jmethodID update_messages_mid = 0;
+jmethodID update_info_mid = 0;
 
 JNIEnv *env = 0;
 JNIEXPORT void JNICALL Java_net_hackcasual_freeciv_NativeHarness_registerDialogManager
@@ -44,6 +46,12 @@ JNIEXPORT void JNICALL Java_net_hackcasual_freeciv_NativeHarness_registerDialogM
 		return;
 	}
 
+	turn_done_state_mid = (*env)->GetMethodID(env, cls, "setTurnDoneButton", "(Z)V");
+	if (turn_done_state_mid == 0) {
+		LOGE("Failed to get setTurnDoneButton");
+		return;
+	}
+
 	city_dialog_mid = (*env)->GetMethodID(env, cls, "showCityDialog", "(I)V");
 	if (city_dialog_mid == 0) {
 		LOGE("Failed to get showCityDialog");
@@ -56,6 +64,12 @@ JNIEXPORT void JNICALL Java_net_hackcasual_freeciv_NativeHarness_registerDialogM
 		return;
 	}
 
+	update_info_mid = (*env)->GetMethodID(env, cls, "infoUpdate", "()V");
+	if (update_info_mid == 0) {
+		LOGE("Failed to get infoUpdate");
+		return;
+	}
+
 }
 
 void java_new_city_dialog(char * suggestion, int unit_id) {
@@ -64,6 +78,13 @@ void java_new_city_dialog(char * suggestion, int unit_id) {
 	(*env)->CallVoidMethod(env, dialog_manager, new_city_dialog_mid, sugg, unit_id);
 }
 
+void java_set_turn_done_state(bool state) {
+	int res = (*jvm)->AttachCurrentThread(jvm, &env, 0);
+
+	jboolean jstate = state;
+
+	(*env)->CallVoidMethod(env, dialog_manager, turn_done_state_mid, jstate);
+}
 
 void java_city_dialog(const struct city *pcity) {
 	//JNIEnv *env2 = 0;
@@ -108,3 +129,9 @@ void java_show_messages() {
 
 	}
 }
+
+void java_update_info() {
+	int res = (*jvm)->AttachCurrentThread(jvm, &env, 0);
+	(*env)->CallVoidMethod(env, dialog_manager, update_info_mid);
+}
+

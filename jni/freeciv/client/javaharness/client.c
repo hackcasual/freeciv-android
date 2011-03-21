@@ -112,19 +112,19 @@
 
 
 void startClient() {
-	char *logfile = "/sdcard/client.out";
+	char *logfile = "/data/data/net.hackcasual.freeciv/client.out";
 	FILE *fp;
-	  if((fp=freopen("/sdcard/freeciv_out_client.log", "w" ,stdout))==NULL) {
+	  if((fp=freopen("/data/data/net.hackcasual.freeciv/freeciv_out_client.log", "w" ,stdout))==NULL) {
 	    printf("Cannot open file.\n");
 	    exit(1);
 	  }
 
-	  if((fp=freopen("/sdcard/freeciv_err_client.log", "w" ,stderr))==NULL) {
+	  if((fp=freopen("/data/data/net.hackcasual.freeciv/freeciv_err_client.log", "w" ,stderr))==NULL) {
 	    printf("Cannot open file.\n");
 	    exit(1);
 	  }
 
-	  setenv ("HOME", "/sdcard/Freeciv", 0);
+	  setenv ("HOME", "/data/data/net.hackcasual.freeciv/Freeciv", 0);
 	  setenv ("USER", "Sparky", 0);
 
 	LOGI("Hello JNI");
@@ -216,7 +216,7 @@ JNIEXPORT void JNICALL Java_net_hackcasual_freeciv_NativeHarness_loadTileset
   (JNIEnv *je, jobject o) {
 
 	//TODO: Allow specifying tileset
-	tilespec_try_read("amplio", TRUE);
+	tilespec_try_read("amplio2", TRUE);
 	tileset_init(tileset);
 	tileset_load_tiles(tileset);
 }
@@ -398,8 +398,10 @@ JNIEXPORT void JNICALL Java_net_hackcasual_freeciv_NativeHarness_reloadMap
 
 }
 
-JNIEXPORT jboolean JNICALL Java_net_hackcasual_freeciv_NativeHarness_touchEvent
+/*JNIEXPORT jboolean JNICALL Java_net_hackcasual_freeciv_NativeHarness_touchEvent
   (JNIEnv *je, jobject o, jint x, jint y, jint type) {
+
+	LOGI("SparkyTWD: Touch Event @ %d,%d type: %d", x, y, type);
 
 	struct timeval tvs, tve;
     int nif = 0;
@@ -416,7 +418,7 @@ JNIEXPORT jboolean JNICALL Java_net_hackcasual_freeciv_NativeHarness_touchEvent
 	struct tile *plasttile;
 
 	switch (type) {
-	case 0: {
+	case 0: { //ACTION_DOWN
 		cancelUp = FALSE;
 		oldx = x;
 		oldy = y;
@@ -424,7 +426,7 @@ JNIEXPORT jboolean JNICALL Java_net_hackcasual_freeciv_NativeHarness_touchEvent
 
 		break;
 	}
-	case 1: {
+	case 1: { //ACTION_UP
 		if (!cancelUp && abs(x - oldx) < 10 && abs(y - oldy) < 10) {
 			can_slide = FALSE;
 			LOGI("ABP Lock");
@@ -446,11 +448,11 @@ JNIEXPORT jboolean JNICALL Java_net_hackcasual_freeciv_NativeHarness_touchEvent
 		}
 		break;
 	}
-	case 2: {
+	case 2: { //ACTION_MOVE
 		/*hover_state = HOVER_GOTO;
 		control_mouse_cursor(canvas_pos_to_tile(x,y));
 		update_line(x,y);
-		break;*/
+		break;
 		if (cancelUp || abs(x - oldx) > 10 || abs(y - oldy) > 10) {
 			cancelUp = TRUE;
 			LOGI("Slide Lock");
@@ -467,14 +469,14 @@ JNIEXPORT jboolean JNICALL Java_net_hackcasual_freeciv_NativeHarness_touchEvent
 		}
 		break;
 	}
-	case 3: {
+	case 3: { //ACITON_CANCEL
 		cancelUp = TRUE;
 		break;
 	}
 	}
 
 	return 0;
-}
+}*/
 
 // TODO: Support irrigation modes
 JNIEXPORT jbyteArray JNICALL Java_net_hackcasual_freeciv_NativeHarness_getAvailableCommandsForActiveUnit
@@ -1134,7 +1136,7 @@ JNIEXPORT jobject JNICALL Java_net_hackcasual_freeciv_NativeHarness_getPlayerInf
 	}
 
 	cid = (*env)->GetMethodID(env, cls,
-	                               "<init>", "(ILjava/lang/String;ZILjava/lang/String;IIIIIIIII)V");
+	                               "<init>", "(ILjava/lang/String;Ljava/lang/String;IIILjava/lang/String;ZILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIIIIIIII)V");
 
 	if (!cid) {
 		LOGE("Couldn't find the player constructor");
@@ -1158,21 +1160,41 @@ JNIEXPORT jobject JNICALL Java_net_hackcasual_freeciv_NativeHarness_getPlayerInf
 
 	jstring name = ((*env)->NewStringUTF(env, pplayer->name));
 	jstring nation_name = ((*env)->NewStringUTF(env, pplayer->nation->adjective.vernacular));
+	jstring flag_name = ((*env)->NewStringUTF(env, pplayer->nation->flag_graphic_str));
+	jstring user_name = ((*env)->NewStringUTF(env, pplayer->username));
+	jstring text_year = ((*env)->NewStringUTF(env, textyear(game.info.year)));
+	jstring people_name = ((*env)->NewStringUTF(env, pplayer->nation->noun_plural.vernacular));
+	jstring ruler_name = ((*env)->NewStringUTF(env, ruler_title_translation(pplayer)));
+
+	int bulbs_required = -1;
+
+	Tech_type_id tech = get_player_research(pplayer)->researching;
 
 
+
+	if (tech == A_FUTURE || (tech >= 0 && tech < game.control.num_tech_types))
+		bulbs_required = total_bulbs_required(pplayer);
 
 	jobject playa = (*env)->NewObject(env, cls, cid,
 			player_number(pplayer),
+			user_name,
+			text_year,
+			civ_population(client.conn.playing),
+			client.conn.playing->economic.gold,
+			client.conn.playing->score.game,
 			name,
 			pplayer->is_male,
-			pplayer->user_turns,
+			game.info.turn,
+			ruler_name,
 			nation_name,
+			people_name,
+			flag_name,
 			w,
 			h,
 			pplayer->bulbs_last_turn,
 			get_player_research(pplayer)->researching,
 			get_player_research(pplayer)->bulbs_researched,
-			total_bulbs_required(pplayer),
+			bulbs_required,
 			pplayer->government?pplayer->government->item_number:-1,
 			pplayer->target_government?pplayer->target_government->item_number:-1,
 			pplayer->revolution_finishes - game.info.turn
@@ -1388,9 +1410,81 @@ JNIEXPORT jintArray JNICALL Java_net_hackcasual_freeciv_NativeHarness_getAvailab
 	return govs;
 }
 
-JNIEXPORT void JNICALL Java_net_hackcasual_freeciv_NativeHarness_save
+JNIEXPORT jint JNICALL Java_net_hackcasual_freeciv_NativeHarness_getCityOnTile(JNIEnv * env, jobject obj, jint x, jint y) {
+
+	civ_lock();
+	struct tile *ptile = canvas_pos_to_tile(x,y);
+	civ_unlock();
+
+	struct city* pcity = tile_city(ptile);
+
+	if (!pcity)
+		return -1;
+	return pcity->id;
+}
+
+JNIEXPORT void JNICALL Java_net_hackcasual_freeciv_NativeHarness_actionSelectPopup(JNIEnv * env, jobject obj, jint x, jint y) {
+
+	can_slide = FALSE;
+	civ_lock();
+	action_button_pressed(x,y,SELECT_POPUP);
+	can_slide = TRUE;
+	flush_dirty();
+	civ_unlock();
+
+	return;
+}
+
+JNIEXPORT void JNICALL Java_net_hackcasual_freeciv_NativeHarness_moveMapView(JNIEnv * env, jobject obj, jint deltax, jint deltay) {
+
+	civ_lock();
+	can_slide = FALSE;
+	set_mapview_origin(mapview.gui_x0 + deltax, mapview.gui_y0 + deltay);
+	flush_dirty();
+	civ_unlock();
+	can_slide = TRUE;
+
+	return;
+}
+
+
+
+JNIEXPORT void JNICALL Java_net_hackcasual_freeciv_NativeHarness_showCursorAt(JNIEnv * env, jobject obj, jint x, jint y) {
+
+	int hot_x, hot_y, cursor_x, cursor_y;
+	struct sprite *mouse_cursor
+	        = get_cursor_sprite(tileset, CURSOR_GOTO, &hot_x, &hot_y, 0);
+
+	struct tile *ptile = canvas_pos_to_tile(x,y);
+
+	civ_lock();
+
+	if (!goto_is_active())
+		key_unit_goto();
+
+	hover_state = HOVER_GOTO;
+	control_mouse_cursor(ptile);
+	update_line(x,y);
+	tile_to_canvas_pos(&cursor_x, &cursor_y, ptile);
+
+    cursor_x += tileset_tile_width(tileset) / 2;
+    cursor_y += tileset_tile_height(tileset) / 2;
+    cursor_x -= hot_x;
+    cursor_y -= hot_y;
+
+	unqueue_mapview_updates(FALSE);
+
+	canvas_put_sprite_full(mapview.store, cursor_x, cursor_y, mouse_cursor);
+    dirty_rect(cursor_x, cursor_y, mouse_cursor->width, mouse_cursor->height);
+
+	flush_dirty();
+	civ_unlock();
+
+	return;
+}
+JNIEXPORT void JNICALL Java_net_hackcasual_freeciv_NativeHarness_cancelAction
   (JNIEnv * env, jobject obj) {
-	send_chat("/save");
+	key_cancel_action();
 }
 
 JNIEXPORT void JNICALL Java_net_hackcasual_freeciv_NativeHarness_exercise1

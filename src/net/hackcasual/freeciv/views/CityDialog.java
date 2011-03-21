@@ -182,7 +182,7 @@ public class CityDialog extends Activity {
         
         cityMap.setLayoutParams(new LinearLayout.LayoutParams((int)(city.getMap().getWidth() * mapScale), 
         		(int)(city.getMap().getHeight() * mapScale)));
-        productionIcon.setImageBitmap(city.getCurrentProduction().getIcon());
+        productionIcon.setImageDrawable(city.getCurrentProduction().getIcon());
         productionName.setText(city.getCurrentProduction().getName() + " in " + city.getProductionTurns() + " turns. (" + city.getProductionStock() + ")" );
 
     }

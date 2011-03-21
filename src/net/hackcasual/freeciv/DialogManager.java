@@ -51,6 +51,19 @@ public class DialogManager {
 		this.container = container;
 	}
 	
+	public void infoUpdate() {
+		(new Thread() {
+			@Override
+			public void run() {
+				Civ.checkForNewTurn();
+			}
+		}).start();
+	}
+	
+	public void setTurnDoneButton(final boolean state) {
+		//Log.d("Freeciv","Setting turn done button " + state);
+	}
+	
 	public void showCityNameDialog(final String suggested, final int unit_id) {
 		if (container == null)
 			return;

@@ -15,16 +15,12 @@
             android:id="@android:id/tabcontent"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
-            <TextView 
-                android:id="@+id/textview1"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" 
-                android:text="this is a tab" />
-            <TextView 
-                android:id="@+id/textview2"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" 
-                android:text="this is another tab" />
+			<include android:id="@+id/your_pacts" layout="@layout/player_pacts"
+				android:layout_height="fill_parent"
+				android:layout_width="fill_parent"></include>
+			<include android:id="@+id/their_pacts" layout="@layout/player_pacts"
+				android:layout_height="fill_parent"
+				android:layout_width="fill_parent"></include>
             <TextView 
                 android:id="@+id/textview3"
                 android:layout_width="fill_parent"

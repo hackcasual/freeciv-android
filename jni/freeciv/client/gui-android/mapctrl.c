@@ -40,7 +40,7 @@ void popup_newcity_dialog(struct unit *punit, char *suggestname)
 **************************************************************************/
 void set_turn_done_button_state(bool state)
 {
-	freelog(LOG_VERBOSE, "Port Me %s [@%s:%d]", __func__, __FILE__, __LINE__);
+	java_set_turn_done_state(state);
 }
 
 /**************************************************************************

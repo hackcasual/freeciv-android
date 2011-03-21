@@ -62,7 +62,8 @@ public class ResearchView extends Activity {
         	FrameLayout impr = (FrameLayout) this.getLayoutInflater().inflate(R.layout.imprinfo, null);
 
             ImageView iv = (ImageView)impr.findViewById(R.id.impr_icon);
-            iv.setImageBitmap(e.getTarget().getIcon());
+            iv.setImageDrawable(e.getTarget().getIcon());
+
             TextView name = (TextView)impr.findViewById(R.id.impr_desc);
             name.setText(String.format("%s Steps: %d Bulbs: %d", e.getTarget().getName(), e.getSteps(), e.getBulbs()));
             
@@ -70,17 +71,17 @@ public class ResearchView extends Activity {
             
             for (Advance a: e.getTarget().getEnabledAdvances()) {
             	ImageView img = new ImageView(this);
-            	img.setImageBitmap(a.getIcon());
+            	img.setImageDrawable(a.getIcon());
             	enables.addView(img);
             }
             for (UnitType u: e.getTarget().getEnabledUnitTypes()) {
             	ImageView img = new ImageView(this);
-            	img.setImageBitmap(u.getIcon());
+            	img.setImageDrawable(u.getIcon());
             	enables.addView(img);
             }
             for (Improvement i: e.getTarget().getEnabledImprovements()) {
             	ImageView img = new ImageView(this);
-            	img.setImageBitmap(i.getIcon());
+            	img.setImageDrawable(i.getIcon());
             	enables.addView(img);
             }
 

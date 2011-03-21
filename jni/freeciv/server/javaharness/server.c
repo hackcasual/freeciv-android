@@ -35,25 +35,26 @@
 JNIEXPORT void JNICALL Java_net_hackcasual_freeciv_NativeHarness_startServer
   (JNIEnv *je, jobject o) {
 
+	LOGI("Fake server start");
+
 	FILE *fp;
-	  if((fp=freopen("/sdcard/freeciv_out.log", "w" ,stdout))==NULL) {
+	  if((fp=freopen("/data/data/net.hackcasual.freeciv/freeciv_out.log", "w" ,stdout))==NULL) {
 	    printf("Cannot open file.\n");
 	    exit(1);
 	  }
 
-	  if((fp=freopen("/sdcard/freeciv_err.log", "w" ,stderr))==NULL) {
+	  if((fp=freopen("/data/data/net.hackcasual.freeciv/freeciv_err.log", "w" ,stderr))==NULL) {
 	    printf("Cannot open file.\n");
 	    exit(1);
 	  }
 
-	  setenv ("HOME", "/sdcard/Freeciv", 0);
-
+	  setenv ("HOME", "/data/data/net.hackcasual.freeciv/Freeciv", 0);
 
 
 
 	srv_init();
 
-	  srvarg.log_filename="/sdcard/log.out";
+	  srvarg.log_filename="/data/data/net.hackcasual.freeciv/log.out";
 	  srvarg.loglevel=LOG_DEBUG;
 
 

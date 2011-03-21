@@ -45,7 +45,7 @@ public class ImprovementView extends Activity {
             impr.setOrientation(LinearLayout.HORIZONTAL);
 
             ImageView iv = new ImageView(this);
-            iv.setImageBitmap(i.getIcon());
+            iv.setImageDrawable(i.getIcon());
             TextView name = new TextView(this);
             name.setText(i.getName() + " " + i.getHelpText());
             

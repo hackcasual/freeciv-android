@@ -32,6 +32,7 @@
 
 #include "mapview.h"
 
+#include "javaharness/callbacks.h"
 #include <android/log.h>
 
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, "freecivjni", __VA_ARGS__);
@@ -48,7 +49,7 @@ struct canvas *overview_canvas = 0;
 ****************************************************************************/
 void update_info_label(void)
 {
-	freelog(LOG_VERBOSE, "Port Me %s [@%s:%d]", __func__, __FILE__, __LINE__);
+	java_update_info();
   char buffer[512];
 
   my_snprintf(buffer, sizeof(buffer),

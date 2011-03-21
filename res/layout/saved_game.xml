@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:orientation="vertical" android:layout_height="wrap_content">
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent" android:orientation="horizontal">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1">
+    <TextView android:id="@+id/ruler_of" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/ruler_of" style="@style/saved_game_ruler"></TextView>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="match_parent" android:layout_weight="1">
+            <TextView style="@style/inline_caption" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/year"></TextView>
+            <TextView android:id="@+id/year_value" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
+        </LinearLayout>
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="match_parent" android:layout_weight="1">
+            <TextView style="@style/inline_caption" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/score"></TextView>
+            <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/score_value"></TextView>
+        </LinearLayout>
+        
+        
+    </LinearLayout>
+    <TextView android:id="@+id/last_played_value" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/last_played_date" android:textColor="#888888"></TextView>
+    </LinearLayout>
+    <LinearLayout android:layout_width="wrap_content" android:id="@+id/linearLayout2" android:layout_height="match_parent">
+        <ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/go_button" android:src="@drawable/ic_menu_play_clip"></ImageButton>
+    </LinearLayout>
+</LinearLayout>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:orientation="vertical" android:layout_height="wrap_content"
+  android:id="@+id/full_information">
+  </LinearLayout>
+</LinearLayout>

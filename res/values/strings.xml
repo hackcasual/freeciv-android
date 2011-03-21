@@ -39,4 +39,17 @@
 <string name="load_game">Load Game</string>
 <string name="settings">Settings</string>
 <string name="reference">Reference</string>
+<string name="conditions">Conditions</string>
+<string name="give_city">City</string>
+<string name="give_advance">Advance</string>
+<string name="give_general">Give</string>
+<string name="username">User Name</string>
+<string name="year">Year</string>
+<string name="score">Score</string>
+<string name="ruler_of">%1$s of the %2$s</string>
+<string name="turns">Turns</string>
+<string name="last_played_date">Last played on %1$s</string>
+<string name="save_type">Filter by type</string>
+<string name="delete_game">Delete</string>
+<string name="send_game">Send</string>
 </resources>

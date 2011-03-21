@@ -27,5 +27,7 @@
 
 void java_new_city_dialog(char * suggestion, int unit_id);
 void java_city_dialog(const struct city *pcity);
+void java_set_turn_done_state(bool state);
+void java_update_info();
 
 #endif				/* FC__JNI_CALLBACKS_H */

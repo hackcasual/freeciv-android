@@ -80,6 +80,31 @@ void canvas_copy(struct canvas *dest, struct canvas *src,
 		     int src_x, int src_y, int dest_x, int dest_y, int width,
 		     int height)
 {
+
+	if (src_x < 0) {
+		dest_x -= src_x;
+		width += src_x;
+		src_x -= src_x;
+	}
+
+	if (dest_x < 0) {
+		dest_x -= dest_x;
+		width += dest_x;
+		src_x -= dest_x;
+	}
+
+	if (src_y < 0) {
+		dest_y -= src_y;
+		height += src_y;
+		src_y -= src_y;
+	}
+
+	if (dest_y < 0) {
+		dest_y -= dest_y;
+		height += dest_y;
+		src_y -= dest_y;
+	}
+
 	int w = MIN(src->width - src_x, MIN(dest->width - dest_x, width));
 	int h = MIN(src->height - src_y, MIN(dest->height - dest_y, height));
 
@@ -313,28 +338,7 @@ void canvas_put_line(struct canvas *pcanvas, struct color *pcolor,
 {
 	LOGI("Drawing line @ [%d,%d] delta [%d,%d]", start_x, start_y, off_x, off_y);
 
-	 /*function line(x0, x1, y0, y1)
-	     boolean steep := abs(y1 - y0) > abs(x1 - x0)
-	     if steep then
-	         swap(x0, y0)
-	         swap(x1, y1)
-	     if x0 > x1 then
-	         swap(x0, x1)
-	         swap(y0, y1)
-	     int deltax := x1 - x0
-	     int deltay := abs(y1 - y0)
-	     int error := deltax / 2
-	     int ystep
-	     int y := y0
-	     if y0 < y1 then ystep := 1 else ystep := -1
-	     for x from x0 to x1
-	         if steep then plot(y,x) else plot(x,y)
-	         error := error - deltay
-	         if error < 0 then
-	             y := y + ystep
-	             error := error + deltax*/
 
-	/* src_x, src_y, dst_x - src_x, dst_y - src_y */
 
 	int dx, dy;
 
@@ -393,10 +397,10 @@ void canvas_put_line(struct canvas *pcanvas, struct color *pcolor,
 	             y := y + ystep
 	             error := error + deltax*/
 
-	for (x = start_x; x <= dx; x++) {
+	for (x = start_x; x < dx; x++) {
 		if (steep && y < pcanvas->width && y >= 0 && x < pcanvas->height && x >= 0) {
 			((struct pixel565 *)pcanvas->data)[pcanvas->width * x + y] = pixel;
-		} else if (x < pcanvas->width && y >= 0 && y < pcanvas->height && x >= 0){
+		} else if (!steep && x < pcanvas->width && y >= 0 && y < pcanvas->height && x >= 0){
 			((struct pixel565 *)pcanvas->data)[pcanvas->width * y + x] = pixel;
 		}
 

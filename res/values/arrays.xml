@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="save_game_types">
+    <item>All</item>
+    <item>Manual</item>
+    <item>Auto</item>
+    </string-array>
+</resources>

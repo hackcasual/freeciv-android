@@ -60,10 +60,17 @@ public class PlayerView extends Activity {
         ((TextView)this.findViewById(R.id.last_bulbs)).setText(String.valueOf(player.getLastBulbs()));
         ((TextView)this.findViewById(R.id.government_type_name)).setText(player.getCurrentGovernment().getName() + 
         		(player.getAnarchyTurns() > 0 ? " for " + player.getAnarchyTurns() + " turns":""));
+
         
-        ((ImageView)this.findViewById(R.id.government_type_icon)).setImageBitmap(player.getCurrentGovernment().getIcon());        
+        ((TextView)this.findViewById(R.id.username)).setText(player.getUserName());
+        ((TextView)this.findViewById(R.id.year)).setText(player.getYear());
+        ((TextView)this.findViewById(R.id.score)).setText(String.valueOf(player.getScore()));
+        ((TextView)this.findViewById(R.id.gold)).setText(String.valueOf(player.getGold()));
+        ((TextView)this.findViewById(R.id.population)).setText(String.valueOf(player.getPopulation() * 1000));        
+        
+        ((ImageView)this.findViewById(R.id.government_type_icon)).setImageDrawable(player.getCurrentGovernment().getIcon());        
         if (player.getCurrentlyResearching() != null) {
-	        ((ImageView)this.findViewById(R.id.impr_icon)).setImageBitmap(player.getCurrentlyResearching().getIcon());
+	        ((ImageView)this.findViewById(R.id.impr_icon)).setImageDrawable(player.getCurrentlyResearching().getIcon());
 	        ((TextView)this.findViewById(R.id.impr_desc)).setText(player.getCurrentlyResearching().getName());
 	        ((ProgressBar)this.findViewById(R.id.tech_progress)).setProgress((int)(100.0 * (player.getCurrentBulbsForAdvance() * 1.0 / player.getTotalBulbsForAdvance())));
 	        ((TextView)this.findViewById(R.id.research_progress)).setText(String.format(

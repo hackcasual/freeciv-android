@@ -24,6 +24,7 @@ import net.hackcasual.freeciv.Civ;
 import net.hackcasual.freeciv.DialogManager;
 import net.hackcasual.freeciv.NativeHarness;
 import net.hackcasual.freeciv.NativeHarness.AvailableCommand;
+import net.hackcasual.freeciv.Settings;
 
 import net.hackcasual.freeciv.R;
 import net.hackcasual.freeciv.R.id;
@@ -33,6 +34,7 @@ import net.hackcasual.freeciv.models.*;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -43,8 +45,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -69,20 +74,39 @@ public class Freeciv extends NativeAwareActivity {
 	NativeHarness nh;
 	List<AvailableCommand> currentOptions;
 	DialogManager dm;
-	private Bitmap mapView;
+	static Bitmap mapView;
 	boolean unitMenu = false;
 	long tsBuf[] = new long[10];
 	int tsi = -1, tsc = 0;
 	AlertDialog overviewDialog;
 	boolean isPaused;
+	int lastSavedTurn;
+	GestureDetector gestures;
+	MotionEvent lastLongPress, lastMoveAfterLongPress;
+	
+	 DisplayMetrics metrics;
+	 
+	 
+	 public Freeciv() {
+		 metrics = new DisplayMetrics();
+	 }
+	 
+
 	
 	final BlockingQueue<MotionEvent> touchQueue = new LinkedBlockingQueue<MotionEvent>();
 	
+	public static Bitmap getMapView() {
+		return mapView;
+	}
+		
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        Settings.updateSettings(this);
+        
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
@@ -94,24 +118,22 @@ public class Freeciv extends NativeAwareActivity {
         nh.setMainActivity(this);
       
         Display display = getWindowManager().getDefaultDisplay(); 
-        int width = display.getWidth();
-        int height = display.getHeight();
+        int width = getMapWidth(display);
+        int height = getMapHeight(display);;
         
         NativeHarness.init(width, height);
         
         mapView = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         
-        ((ImageView)findViewById(R.id.map_view)).setImageBitmap(mapView);       
         
-		//Intent startServer = new Intent(this, CivService.class);
-		
-		//ComponentName cn = startService(startServer);
-		//Log.i("Freeciv", String.format("Done starting server %s", cn.toString()));
-        //nh.runClient();
-
+        ((ImageView)findViewById(R.id.map_view)).setImageBitmap(mapView);
+        ((ImageView)findViewById(R.id.map_view)).getDrawable().setFilterBitmap(false);
+        
         final Freeciv me = this;
         
-        (new Thread() {
+
+        
+        /*(new Thread() {
         	public void run() {
         		MotionEvent toProcess = null;
         		while (true) {
@@ -150,13 +172,18 @@ public class Freeciv extends NativeAwareActivity {
         			
         		}
         	}
-        }).start();
+        }).start();*/
     }
     
     @Override
     public void onResume() {
     	super.onResume();
     	this.isPaused = false;
+        
+    	gestures = new GestureDetector (this, new MapViewGestureProcessor());
+
+
+
     	//nh.reloadMap();
     	//nh.updateDisplay();
     }
@@ -164,15 +191,36 @@ public class Freeciv extends NativeAwareActivity {
     @Override
     public void onPause() {
     	super.onPause();
+    	Civ.saveGame(Civ.SaveType.FORCED);
     	this.isPaused = true;
     }    
     
-	@Override
+    private void stopTrackingPushMove() {
+		lastLongPress = null;
+		lastMoveAfterLongPress = null;
+    }
+
+    private boolean isTrackingPushMove() {
+		return (lastLongPress != null && lastMoveAfterLongPress != null);
+    }
+
+    
+    @Override
 	public boolean dispatchTouchEvent(MotionEvent event) {
-		Log.d("Freeciv", event.toString());
-		
-		touchQueue.add(event);
-		return false;
+    	if (event.getAction() == MotionEvent.ACTION_MOVE && lastLongPress != null) {
+    		NativeHarness.showCursorAt((int)event.getX() / 2, (int)event.getY() / 2);
+    		lastMoveAfterLongPress = event;
+    		return true;
+    	} else if (isTrackingPushMove() && event.getAction() == MotionEvent.ACTION_DOWN &&
+    		Math.abs(event.getX() - lastMoveAfterLongPress.getX()) < 40 && Math.abs(event.getY() - lastMoveAfterLongPress.getY()) < 40) {
+    		//Resume moving the selector
+    		return gestures.onTouchEvent(event);
+    	} else if (event.getAction() != MotionEvent.ACTION_UP){
+    		stopTrackingPushMove();
+    		NativeHarness.cancelAction();
+    	}
+    	
+    	return gestures.onTouchEvent(event);
 	}
 	
 	public void showUnitMenu() {
@@ -191,8 +239,8 @@ public class Freeciv extends NativeAwareActivity {
 		units.setAdapter(adapter);
 		//builder.setView(units);
 		
-		for (int i: nh.getUnitsOnTile(x, y)) {
-			adapter.add(nh.getUnitById(i));
+		for (int i: NativeHarness.getUnitsOnTile(x, y)) {
+			adapter.add(NativeHarness.getUnitById(i));
 		}
 
 		builder.setView(units);
@@ -218,21 +266,6 @@ public class Freeciv extends NativeAwareActivity {
 
 	}
 
-	
-	public void showDialog() {
-		final CharSequence[] items = {"Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Kilo", "Lima", "Mike", "November"};
-		
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Pick a color");
-		builder.setItems(items, new DialogInterface.OnClickListener() {
-		    public void onClick(DialogInterface dialog, int item) {
-		        Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
-		    }
-		});
-		AlertDialog alert = builder.create();
-		alert.show();
-	}
-
 	public void updateMapview(final ByteBuffer image, final Semaphore renderLock) {
 		
 		/*if (this.isPaused) {
@@ -251,6 +284,7 @@ public class Freeciv extends NativeAwareActivity {
 				image.rewind();
 				mapView.copyPixelsFromBuffer(image);
 				((ImageView)findViewById(R.id.map_view)).setImageBitmap(mapView);
+				((ImageView)findViewById(R.id.map_view)).getDrawable().setFilterBitmap(false);
 				//renderLock.release();
 				Log.i("Freeciv", "gui thread released lock");
 			}
@@ -363,7 +397,9 @@ public class Freeciv extends NativeAwareActivity {
 			
 			if (currentOptions.size() > 0) {
 				SubMenu unitOrders = menu.addSubMenu(0, 101, 0, Civ.getUnitTypeById(nh.getFocusedUnitType()).getName());
-				unitOrders.setIcon(new BitmapDrawable(Civ.getUnitTypeById(nh.getFocusedUnitType()).getIcon()));
+				
+				BitmapDrawable bd = Civ.getUnitTypeById(nh.getFocusedUnitType()).getIcon();
+				unitOrders.setIcon(bd);
 				
 				for (AvailableCommand command: currentOptions) {
 					Log.d("Freeciv", String.valueOf(command));				
@@ -388,7 +424,7 @@ public class Freeciv extends NativeAwareActivity {
 		case 101: showUnitMenu(); break;
 		case 102: showResearchActivity(); break;
 		case 103: showPlayerInfo(); break;
-		case 104: NativeHarness.save(); break;
+		case 104: Civ.saveGame(Civ.SaveType.MANUAL); break;
 		default: nh.sendCommand(item.getItemId()); break;
 		}
 		
@@ -421,10 +457,11 @@ public class Freeciv extends NativeAwareActivity {
 			((Civ)this.getApplicationContext()).loadUniversals();
 			isConnected = true;
 			NativeHarness.tellServer("/set dispersion=5");
+			NativeHarness.tellServer("/set saveturns=0");
 			
 			if (this.getIntent().hasExtra(LoadGame.SAVED_GAME_TAG)) {
 				String savedGame = this.getIntent().getStringExtra(LoadGame.SAVED_GAME_TAG);
-				NativeHarness.tellServer(String.format("/load /sdcard/Freeciv/%s", savedGame));
+				NativeHarness.tellServer(String.format("/load %s", savedGame));
 			}
 			
 			NativeHarness.tellServer("/start");
@@ -439,8 +476,8 @@ public class Freeciv extends NativeAwareActivity {
         	overviewDialog.cancel();
         
         Display display = getWindowManager().getDefaultDisplay(); 
-        int width = display.getWidth();
-        int height = display.getHeight();
+        int width = getMapWidth(display);
+        int height = getMapHeight(display);
         
         NativeHarness.init(width, height);
         
@@ -462,7 +499,7 @@ public class Freeciv extends NativeAwareActivity {
         float imageScale = 0.0f;
         int image_width, image_height;
         
-        Bitmap theOverview = nh.getOverview();
+        Bitmap theOverview = NativeHarness.getOverview();
         
         if (width < height) {
         	float destWidth = width * 0.66f;
@@ -504,7 +541,7 @@ public class Freeciv extends NativeAwareActivity {
 			public boolean onTouch(View arg0, MotionEvent arg1) {
 				Log.i("Freeciv", String.format("Touch: %d, %d", (int)(arg1.getX()), (int)(arg1.getY())));
 				nh.positionFromOverview((int)(arg1.getX() / scaleFactor), (int)(arg1.getY() / scaleFactor));
-				BitmapDrawable filtered = new BitmapDrawable(nh.getOverview());
+				BitmapDrawable filtered = new BitmapDrawable(NativeHarness.getOverview());
 		    	filtered.setAntiAlias(false);
 		    	filtered.setFilterBitmap(false);
 				overviewView.setImageDrawable(filtered);
@@ -528,5 +565,115 @@ public class Freeciv extends NativeAwareActivity {
     	
     	
         return false;  // don't go ahead and show the search box
+    }
+    
+    private int getMapWidth(Display d) {
+    	if (Settings.getCurrentSettings().isHalveResolution()) {
+    		return d.getWidth() / 2;
+    	}
+    	
+    	return d.getWidth();
+    }
+
+    private int getMapHeight(Display d) {
+    	if (Settings.getCurrentSettings().isHalveResolution()) {
+    		return d.getHeight() / 2;
+    	}
+    	
+    	return d.getHeight();
+    }
+    
+    private int scalePos(float p) {
+    	if (Settings.getCurrentSettings().isHalveResolution()) {
+    		return (int)p / 2;
+    	}
+    	
+    	return (int)p;    	
+    }
+    
+    private int scaleMotionX(MotionEvent e) {
+    	return scalePos(e.getX());
+    }
+    
+    private int scaleMotionY(MotionEvent e) {
+    	return scalePos(e.getY());	    	
+    }
+    
+    private class MapViewGestureProcessor extends GestureDetector.SimpleOnGestureListener {
+    	@Override
+		public boolean onScroll(MotionEvent e1, MotionEvent e2,
+				float distanceX, float distanceY) {
+
+    		if (isTrackingPushMove())
+    			return true;
+
+			NativeHarness.moveMapView(scalePos(distanceX), scalePos(distanceY));
+			
+			return true;
+		}
+
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+				float velocityY) {
+    		if (isTrackingPushMove())
+    			return true;
+			
+			// Need to handle flings
+			return super.onFling(e1, e2, velocityX, velocityY);
+		}
+
+		@Override
+		public void onLongPress(MotionEvent e) {
+			Log.d("FreeCiv", String.format("LongPress - e: %s", e.toString()));
+			lastLongPress = e;
+			
+			if (isTrackingPushMove())
+				return;
+			
+			int[] unitsOnTile = NativeHarness.getUnitsOnTile(scaleMotionX(e), scaleMotionY(e));
+			
+			if (unitsOnTile.length > 0) {
+				//NativeHarness.actionSelectPopup(scaleMotionX(e), scaleMotionY(e));
+				NativeHarness.focusOnUnit(unitsOnTile[0]);
+				NativeHarness.sendCommand(0); //Trigger goto
+ 				Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+				vibrator.vibrate(50);
+			} else {
+				stopTrackingPushMove();
+			}
+			
+			super.onLongPress(e);
+		}
+
+		@Override
+		public boolean onSingleTapConfirmed(MotionEvent e) {
+			Log.d("FreeCiv", String.format("Tapped - e: %s", e.toString()));
+			
+			if (isTrackingPushMove())
+				if (Math.abs(e.getX() - lastMoveAfterLongPress.getX()) < 40 && Math.abs(e.getY() - lastMoveAfterLongPress.getY()) < 40) {
+					NativeHarness.actionSelectPopup(scaleMotionX(e), scaleMotionY(e));
+				} else {
+					stopTrackingPushMove();
+				}
+			else {
+				
+				int[] unitsOnTile = NativeHarness.getUnitsOnTile(scaleMotionX(e), scaleMotionY(e));
+				
+				if (NativeHarness.getCityOnTile(scaleMotionX(e), scaleMotionY(e)) == -1) {
+	    			if (unitsOnTile.length > 0) {
+	        			if (unitsOnTile.length == 1) {
+	        				showUnitMenu();
+	        			} else {
+	        				showUnitSelection(scaleMotionX(e), scaleMotionY(e));
+	        			}
+	    			}
+				}
+				
+				NativeHarness.actionSelectPopup(scaleMotionX(e), scaleMotionY(e));
+			}
+			
+			return super.onSingleTapConfirmed(e);
+		}
+
     }
 }

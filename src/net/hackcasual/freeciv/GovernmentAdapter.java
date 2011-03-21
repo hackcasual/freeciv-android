@@ -46,7 +46,7 @@ public class GovernmentAdapter extends ArrayAdapter<Government> {
 		} else {
 			curView = (LinearLayout) viewInflater.inflate(R.layout.gov_info, null);
 		}
-		((ImageView)curView.findViewById(R.id.gov_icon)).setImageBitmap(g.getIcon());		
+		((ImageView)curView.findViewById(R.id.gov_icon)).setImageDrawable(g.getIcon());		
 		((TextView)curView.findViewById(R.id.gov_name)).setText(g.getName());
 		return curView;
 	}

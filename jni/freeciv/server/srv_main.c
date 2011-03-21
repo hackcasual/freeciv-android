@@ -189,7 +189,7 @@ void srv_init(void)
   srvarg.ranklog_filename = NULL;
   srvarg.load_filename[0] = '\0';
   srvarg.script_filename = NULL;
-  srvarg.saves_pathname = "/sdcard/Freeciv";
+  srvarg.saves_pathname = "/data/data/net.hackcasual.freeciv/Freeciv";
   srvarg.scenarios_pathname = "";
 
   srvarg.quitidle = 0;

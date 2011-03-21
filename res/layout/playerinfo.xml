@@ -27,10 +27,31 @@
 			android:layout_width="fill_parent"></TextView>			
 			
 			
-	<LinearLayout android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="fill_parent" android:onClick="clickGovernment" android:background="@drawable/clickable_highlights"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/government_type_icon"></ImageView><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/government_type_name"></TextView></LinearLayout><include android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/impr_info" layout="@layout/imprinfo"></include><ProgressBar android:layout_height="wrap_content" style="?android:attr/progressBarStyleHorizontal" android:max="100" android:id="@+id/tech_progress" android:layout_width="fill_parent"></ProgressBar><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/research_progress"></TextView>
+	<LinearLayout android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="fill_parent" android:onClick="clickGovernment" android:background="@drawable/clickable_highlights"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/government_type_icon"></ImageView><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/government_type_name"></TextView></LinearLayout>
+	<LinearLayout android:orientation="horizontal" android:layout_height="wrap_content" android:layout_width="match_parent">
+		<TextView android:paddingRight="5sp" android:text="@string/username" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
+		<TextView android:id="@+id/username" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
+	</LinearLayout>
+	<LinearLayout android:orientation="horizontal" android:layout_height="wrap_content" android:layout_width="match_parent">
+		<TextView android:paddingRight="5sp" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/year"></TextView>
+		<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/year"></TextView>
+	</LinearLayout>
+	<LinearLayout android:orientation="horizontal" android:layout_height="wrap_content" android:layout_width="match_parent">
+		<TextView android:paddingRight="5sp" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/gold"></TextView>
+		<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/gold"></TextView>
+	</LinearLayout>
+	<LinearLayout android:orientation="horizontal" android:layout_height="wrap_content" android:layout_width="match_parent">
+		<TextView android:paddingRight="5sp" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/population"></TextView>
+		<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/population"></TextView>
+	</LinearLayout>
+	<LinearLayout android:orientation="horizontal" android:layout_height="wrap_content" android:layout_width="match_parent">
+		<TextView android:paddingRight="5sp" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/score"></TextView>
+		<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/score"></TextView>
+	</LinearLayout>			
+<include android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/impr_info" layout="@layout/imprinfo"></include><ProgressBar android:layout_height="wrap_content" style="?android:attr/progressBarStyleHorizontal" android:max="100" android:id="@+id/tech_progress" android:layout_width="fill_parent"></ProgressBar><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/research_progress"></TextView>
 
 
-<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Diplomacy" android:onClick="showDiplomacy"></Button>
+<!-- <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Diplomacy" android:onClick="showDiplomacy"></Button> -->
 </LinearLayout>
 
 
